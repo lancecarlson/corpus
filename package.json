@@ -6,7 +6,7 @@
   "author"        : "Lance Carlson <lcarlson@healpay.com>",
   "contributors"  : [],
   "dependencies"  : {
-    "underscore"  : ">=1.1.2"
+    "underscore"  : ">=1.1.2",
     "jquery"	  : ">=1.5.1"
   },
   "lib"           : ".",
