@@ -51,7 +51,7 @@ this.Post = Model "post"
 Post.hasMany "comments"
 Post.hasOne "user"
 
-_.extend Invoice.prototype,
+_.extend Post.prototype,
   initialize: (attributes) ->
     this.bind "save:before", this.onBeforeSave
 
@@ -80,3 +80,25 @@ post.save
 ## Views:
 
 There is no special constant/class to extend for views. We merely use a convention at this point. In the future we may offer a constant/class you can extend for additional assistance but for now, the convention we've adopted has worked pretty well.
+
+### Example:
+
+```coffeescript
+this.PostView.Form = (post) ->
+  view = this
+  $("#post_form").submit ->
+    self = this
+    post.save
+      success: (respPost) ->
+        if post.isNew
+          post = respPost
+        if $(self).data("redirect")
+          document.location.href = $(self).data("redirect")
+        $(self).trigger "saved"
+      error: (post) ->
+        $("#error_explanation ul").html("")
+        messages = _.each post.errors(), (message, value) ->
+          $("#error_explanation ul").append("<li>" + value + " " + message + "</li>");
+        $("#error_explanation").show()
+```
+    
