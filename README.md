@@ -5,11 +5,21 @@ Corpus.js is a Javascript framework written entirely in CoffeeScript that makes 
 ## Features
 
 * Light-weight URL Routing. (Does not support hashbang urls.. yet)
+* Modular views
 * Conventions for maintaining views
 * Models for persisting state
 * Model bindings
 * Written entirely in coffeescript
 * Currently developed with a RESTful ruby on rails backend in mind, but can be expanded for others.
+
+## Why not backbone, sproutcore, Sammy, etc?
+
+* Lighter weight than sproutcore 
+* More modular than backbone (you can just take the model pieces if you want and ignore the controller/routes)
+* Does have a view object like backbone, but merely enforces a sane and simple convention
+* Models have association support within a request. (backbone lacks this)
+* Models can bind to the changes events of form fields (backbone lacks this)
+* Written entirely in coffeescript. Most of the big client side microframeworks are written in javascript
 
 ## Dependencies
 
