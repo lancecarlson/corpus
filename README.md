@@ -117,7 +117,7 @@ post.bind "change", ->
 
 ```coffeescript
 
-# Will automatically bind change events from fields in this form and update the post model. 
+# Will automatically bind change events from fields in this form and update the post record. 
 # Works with associations too!
 post.bindTo "#post_form"
 ```
