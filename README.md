@@ -16,6 +16,10 @@ Corpus.js is a Javascript framework written entirely in CoffeeScript that makes 
 * Underscore (http://documentcloud.github.com/underscore/)
 * Everything inside of the lib directory. https://github.com/lancecarlson/corpus/tree/master/lib
 
+Make sure the js files load in the following order:
+
+JQuery and Underscore, then everything in lib, then model and routes
+
 ## Routing/Controllers
 
 You can choose to use corpus routing or not. Presently it's only purpose is to load specific views/models when a specific page is loaded. This is helpful for consolidating behavior per page rather than having all of your JQuery selectors running on every page. 
