@@ -18,10 +18,13 @@ this.Model = (name, options, func) ->
   model._name = name
 
   _.extend model.prototype, Model.Events,
+    # Callback that can be used when a record is initialized
     initialize: -> # Do nothing
 
+    # Returns the model name of the record
     modelName: -> "#{_.classify this._name}"
 
+    # Returns the attributes associated with the record
     attributes: -> this._attributes
 
     _change: (record) ->
@@ -52,26 +55,14 @@ this.Model = (name, options, func) ->
         , this
       , this
 
-      #  attrPieces = attr.split("_")
-      #  # is an association
-      #  if attrPieces.pop() == "attributes"
-      #    delete attributes[attr]
-      #    associationName = attrPieces.join("_")
-      #    if _.include model.listAssociations(), associationName
-      #      klass = _.classify associationName
-      #      _.each val, (attrs, tag_id) ->
-      #        # this line could probably just say new Model(klass). Need to test.
-      #        instance = eval("new #{klass}")
-      #        instance._refresh(attrs)
-      #        instance._tagId = parseInt(tag_id)
-      #        instance._parent = this
-      #        this[associationName].add instance
-      #      , this
-      #, this
-
+    # Get the attribute value.
+    # post.get("body")
     get: (key) ->
       this._attributes[key]
 
+    # Set the attribute value. Can set multiple keys at once.
+    # post.set("body", "Lorem Ipsum..")
+    # post.set({body: "Lorem Ipsum", title: "Fake Latin Lesson"})
     set: (key, value) ->
       if _.isString(key) or _.isNumber(key)
         # Run value through sanitation if set
@@ -93,6 +84,9 @@ this.Model = (name, options, func) ->
         for k, v of key
           this.set(k, v)
 
+    # Set or get an attribute value/values
+    # post.attr("body", "Lorem Ipsum")
+    # post.attr("body") #=> "Lorem Ipsum"
     attr: (key, value) ->
       argLen = arguments.length
       return false if (_.isUndefined(key) or _.isEmpty(key)) && argLen > 0
@@ -105,31 +99,27 @@ this.Model = (name, options, func) ->
       else
         this.set(key)
 
+    # Indicates if the record has changed or not.
+    # Returns true or false
     changed: -> this._changes != {}
 
+    # Changes to the attributes of the record
+    # Returns {key: "value", key2: "value2"}
     changes: -> this._changes
 
+    # Unbind record from a form. See bindTo()
     unbindFrom: (form) ->
       $(form).undelegate ":input", "change", this.onBoundChange
       $(form).undelegate ":input", "keyup", this.onBoundChange
 
+    # Bind record to a form. All changes to input/select/textarea fields will automatically update the
+    # attributes on a record.
+    # post.bindTo "#post_form"
     bindTo: (form) ->
       self = this
       $(form).delegate ":input", "change", {record: this}, this.onBoundChange
       $(form).delegate ":input", "keyup", {record: this}, this.onBoundChange
-        #element = $(this).getParams()[model._name]
-        #tag_id = $(this).attr("name").replace /[^0-9]+/gi, ''
 
-        #_.each element, (val, attr) ->
-        #  attrPieces = attr.split("_")
-
-        #  if attrPieces.pop() == "attributes"
-        #    associationName = attrPieces.join("_")
-        #    record = self[associationName].findByTagId tag_id
-        #    _.each val, (value) ->
-        #      record.attr value if record
-        #  else
-        #    self.attr attr, val
     onBoundChange: (e) ->
       el = $(e.target)
       record = e.data.record
@@ -160,20 +150,33 @@ this.Model = (name, options, func) ->
     _parseNameField: (el) ->
       _.map el.attr("name").split("["), (p) -> p.replace("]", "")
 
+    # Gets the id of the record from the server
     id: -> this.get("id")
 
+    # The UID for the record object. This is generated randomly for each record and is never equal to the id()
     uid: -> this._uid
 
+    # Determines if the record is new or not. Looks at the id() and if it is set, then it's not new.
+    # Returns true or false
     isNew: -> !_.isNumber this.id()
 
+    # Displays the validations errors that came from the server response
     errors: -> this._errors
 
+    # Reset validation errors
     resetErrors: -> this._errors = {}
 
+    # When a record has been marked hasMany or hasOne, they become a child in that association.
+    # parent() is a convenient way to access the parent object.
+    # Example, Post.hasMany "comments"
+    # comment.parent() #=> post record
     parent: -> this._parent
 
+    # Deprecated
     tagId: -> this._tagId
 
+    # Generates JSON for the persistence request. You never need to call this but it's useful to look at
+    # for debugging purposes. You can also override this method to generate your own toJSON logic.
     toJSON: (options) ->
       baseObj = if options and options.child
         this._json = _.clone this.attributes()
@@ -200,14 +203,19 @@ this.Model = (name, options, func) ->
 
       this._json
 
+    # The url used to make REST requests
     getUrl: (method) ->
       path = _.pluralize "/#{model._name}"
       path = "#{path}/#{this.id()}" unless this.isNew()
       path
 
-    # should pass success and error callbacks
-    # success: (record, resp, xhr)
-    # error: (record, resp, xhr)
+    # Saves the record
+    # Example:
+    # post.save
+    #   success: (validPost) ->
+    #     console.log "SUCCESS"
+    #   errors: (invalidPost) ->
+    #     console.log invalidPost.errors
     save: (options) ->
       method = if this.isNew() then "create" else "update"
 
@@ -232,6 +240,7 @@ this.Model = (name, options, func) ->
 
       Model.Sync(record, method, options)
 
+    # Deprecated.
     toData: -> # Do nothing
 
   # Associations
@@ -243,6 +252,16 @@ this.Model = (name, options, func) ->
     listAssociations: ->
       this._manyAssociations.concat this._oneAssociations
 
+    # Sets a hasMany association for the model
+    # Post.hasMany "comments"
+    #
+    # post.comments #=> [{comment1...}, {comment2...}]
+    #
+    # You can also extend the collection methods by using extend
+    # Post.hasMany "comments",
+    #   extend:
+    #     popularComments: ->
+    #       this.records = this.sortBy (comment) -> comment.position()
     hasMany: (name, options) ->
       this._manyAssociations.push name
       manyArray = {}
@@ -254,6 +273,8 @@ this.Model = (name, options, func) ->
       manyArray[name] = collection
       _.extend model.prototype, manyArray
 
+    # Sets a hasOne association for the model
+    # Post.hasOne "user"
     hasOne: (name) ->
       this._oneAssociations.push name
       association = new Model.One(name)
@@ -263,6 +284,14 @@ this.Model = (name, options, func) ->
       oneObj["clear_#{name}"] = -> association.clear()
       _.extend model.prototype, oneObj
 
+    # Sanitize incoming record attribute data
+    # Task.sanitize "hours", (hours) -> parseInt(hours)
+    #
+    # Then if you do this:
+    # task.set("hours", "5")
+    #
+    # You should get:
+    # task.get("hours") #=> 5
     sanitize: (key, callback) ->
       this._sanitizers[key] = callback
 
