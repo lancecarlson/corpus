@@ -7,6 +7,7 @@ Corpus.js is a Javascript framework written entirely in CoffeeScript that makes 
 * Light-weight URL Routing. (Does not support hashbang urls.. yet)
 * Conventions for maintaining views
 * Models for persisting state
+* Model bindings
 * Written entirely in coffeescript
 * Currently developed with a RESTful ruby on rails backend in mind, but can be expanded for others.
 
@@ -98,6 +99,29 @@ The json will look like:
   ]
 }
 ```
+
+### Binding to events
+
+```coffeescript
+post.comments.bind "add", ->
+  # Will run code after a comment is added to the collection
+
+post.comments.bind "refresh", ->
+  # Will run code after the collection is changed
+
+post.bind "change", ->
+  # Will run when any of the attributes on a post have changed
+```
+
+### Binding to forms
+
+```coffeescript
+
+# Will automatically bind change events from fields in this form and update the post model. 
+# Works with associations too!
+post.bindTo "#post_form"
+```
+
 
 ## Views:
 
