@@ -18,7 +18,7 @@ Corpus.js is a Javascript framework written entirely in CoffeeScript that makes 
 
 Make sure the js files load in the following order:
 
-JQuery and Underscore, then everything in lib, then model and routes
+JQuery and Underscore, then everything in lib, then model and route
 
 ## Routing/Controllers
 
