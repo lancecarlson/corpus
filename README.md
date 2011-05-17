@@ -58,7 +58,20 @@ _.extend Invoice.prototype,
 
   createdAt: ->
     this.get("created_at")
+
+  authorName: ->
+    this.user.name()
 ```
+
+This allows you to do the following:
+
+post = new Post
+post.set("body", "Lorem ipsum...")
+post.save
+  success:
+    # Do whatever
+  error:
+    # Validation errors
 
 ## Views:
 
