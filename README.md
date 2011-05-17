@@ -155,7 +155,7 @@ If you're using jammit with barista, you should use something like this:
 ```
 app/coffeescripts/controllers/     # all of your controllers go here
 app/coffeescripts/models/          # all of your models go here
-app/coffeescripts/views/           # all of your views go here
+app/coffeescripts/views/*/**       # all of your views go here
 app/coffeescripts/vendor/          # all of your vendor files like model.coffee and route.coffee go here
 app/coffeescripts/lib/             # all if your library files like underscore.inflection.coffee go here
 ```
