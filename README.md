@@ -14,6 +14,7 @@ Corpus.js is a Javascript framework written entirely in CoffeeScript that makes 
 
 * JQuery 1.4+ (http://docs.jquery.com/Downloading_jQuery)
 * Underscore (http://documentcloud.github.com/underscore/)
+* JSON2 (https://github.com/douglascrockford/JSON-js)
 
 ## Routing/Controllers
 
