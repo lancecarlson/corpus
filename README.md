@@ -156,12 +156,18 @@ If you're using jammit with barista, you should use something like this:
 app/coffeescripts/controllers/     # all of your controllers go here
 app/coffeescripts/models/          # all of your models go here
 app/coffeescripts/views/*/**       # all of your views go here
-app/coffeescripts/vendor/          # all of your vendor files like model.coffee and route.coffee go here
-app/coffeescripts/lib/             # all if your library files like underscore.inflection.coffee go here
+app/coffeescripts/vendor/          # all of your vendor files go in here. If you use only model.coffee for example, you can stick that file here.
+app/coffeescripts/lib/             # all if your library files like underscore.string.coffee go here
 ```
 
 If you're using barista, this should generate each of the above directories inside of public/javascripts/.
 
 ## Recommended project directory structure using Rails 3:
 
--- Coming Soon --
+```
+app/assets/javascripts/controllers/     # all of your controllers go here
+app/assets/javascripts/models/          # all of your models go here
+app/assets/javascripts/views/*/**       # all of your views go here
+app/assets/javascripts/vendor/          # all of your vendor files like model.coffee and route.coffee go here
+app/assets/javascripts/lib/             # all if your library files like underscore.inflection.coffee go here
+```
