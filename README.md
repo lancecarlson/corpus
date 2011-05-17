@@ -19,6 +19,7 @@ You can choose to use corpus routing or not. Presently it's only purpose is to l
 
 ### Example (posts.coffee)
 
+```coffeescript
 $ -> 
   # Only runs the PostView.Form view when the /posts/new or /posts/:id/edit urls are requested
   _.each ["/posts/new", "/posts/:id/edit"], (route) ->
@@ -28,6 +29,7 @@ $ ->
 
   # Only runs the PostView.Index view when the /posts url is requested
   $.R "/posts", -> new PostView.Index(post)
+```
 
 ## Models
 
