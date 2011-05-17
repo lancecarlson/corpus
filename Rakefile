@@ -16,6 +16,7 @@ end
 desc "Generate Documentaiton"
 task :doc do
   which 'docco'
+  exec "docco src/*.coffee"
 end
 
 # Check for the existence of an executable.
