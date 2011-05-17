@@ -65,6 +65,7 @@ _.extend Invoice.prototype,
 
 This allows you to do the following:
 
+```coffeescript
 post = new Post
 post.set("body", "Lorem ipsum...")
 post.save
@@ -72,6 +73,7 @@ post.save
     # Do whatever
   error:
     # Validation errors
+```
 
 ## Views:
 
