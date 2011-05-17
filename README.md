@@ -6,7 +6,7 @@
 * Conventions for maintaining views
 * Models for persisting state
 * Written entirely in coffeescript
-* Currently developed with a RESTful rails backend in mind, but can be expanded for others.
+* Currently developed with a RESTful ruby on rails backend in mind, but can be expanded for others.
 
 ## Dependencies
 
@@ -33,7 +33,32 @@ $ ->
 
 ## Models
 
-### Example
+To maintain state in the browser, Corpus provides a light-weight model layer that is similar to the popular server-side framework Ruby on Rails. Some of the features it provides are:
+
+* Key, value attributes management (managed attribute changes too)
+* Record UID's as well as database ID management
+* Associations
+* Persistence with a RESTful backend
+* Event system
+* Collections
+
+### Example (post.coffee)
+
+```coffeescript
+this.Post = Model "post"
+Post.hasMany "comments"
+Post.hasOne "user"
+
+_.extend Invoice.prototype,
+  initialize: (attributes) ->
+    this.bind "save:before", this.onBeforeSave
+
+  onBeforeSave: ->
+    # do something
+
+  createdAt: ->
+    this.get("created_at")
+```
 
 ## Views:
 
