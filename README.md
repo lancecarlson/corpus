@@ -1,5 +1,7 @@
 # Corpus
 
+Corpus.js is a Javascript framework written entirely in CoffeeScript that makes it easy to develop large client side web applications without too much overhead.
+
 ## Features
 
 * Light-weight URL Routing. (Does not support hashbang urls.. yet)
