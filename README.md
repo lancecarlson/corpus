@@ -14,11 +14,6 @@ Corpus.js is a Javascript framework written entirely in CoffeeScript that makes 
 
 * JQuery (http://docs.jquery.com/Downloading_jQuery)
 * Underscore (http://documentcloud.github.com/underscore/)
-* Everything inside of the lib directory. https://github.com/lancecarlson/corpus/tree/master/lib
-
-Make sure the js files load in the following order:
-
-JQuery and Underscore, then everything in lib, then model and route
 
 ## Routing/Controllers
 
