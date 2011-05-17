@@ -96,6 +96,7 @@ The json will look like:
   comments: [
     body: "Lorem Ipsum"
   ]
+}
 ```
 
 ## Views:
