@@ -1,0 +1,383 @@
+<!DOCTYPE html>  <html> <head>   <title>model.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="model.html">                 model.coffee               </a>                                           <a class="source" href="route.html">                 route.coffee               </a>                                           <a class="source" href="underscore.inflection.html">                 underscore.inflection.coffee               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               model.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="k">this</span><span class="p">.</span><span class="nv">Model = </span><span class="nf">(name, options, func) -&gt;</span>
+
+  <span class="nv">model = </span><span class="nf">(attributes) -&gt;</span>
+    <span class="nv">self = </span><span class="k">this</span>
+    <span class="k">this</span><span class="p">.</span><span class="nv">_tagId = </span><span class="kc">null</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">_refresh</span> <span class="nx">attributes</span>
+    <span class="k">this</span><span class="p">.</span><span class="nv">_errors = </span><span class="p">{}</span>
+    <span class="k">this</span><span class="p">.</span><span class="nv">_parent = </span><span class="p">{}</span>
+    <span class="k">this</span><span class="p">.</span><span class="nv">_name = </span><span class="nx">name</span>
+    <span class="k">this</span><span class="p">.</span><span class="nv">_json = </span><span class="p">{}</span>
+    <span class="k">this</span><span class="p">.</span><span class="nv">_uid = </span><span class="nx">_</span><span class="p">.</span><span class="nx">uniqueId</span><span class="p">(</span><span class="s2">&quot;#{this._name}_&quot;</span><span class="p">)</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">bind</span> <span class="s2">&quot;change&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_change</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">bind</span> <span class="s2">&quot;data:format&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">toData</span>
+    <span class="nx">_</span><span class="p">.</span><span class="nx">each</span> <span class="nx">model</span><span class="p">.</span><span class="nx">listAssociations</span><span class="p">(),</span> <span class="nf">(associationName) -&gt;</span> <span class="nx">self</span><span class="p">[</span><span class="nx">associationName</span><span class="p">].</span><span class="nv">_parent = </span><span class="nx">self</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">initialize</span><span class="p">(</span><span class="nx">attributes</span><span class="p">)</span>
+    <span class="k">this</span>
+
+  <span class="nv">model._name = </span><span class="nx">name</span>
+
+  <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span> <span class="nx">model</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="nx">Model</span><span class="p">.</span><span class="nx">Events</span><span class="p">,</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Callback that can be used when a record is initialized</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">initialize: </span><span class="o">-&gt;</span> <span class="c1"># Do nothing</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Returns the model name of the record</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">modelName: </span><span class="o">-&gt;</span> <span class="s2">&quot;#{_.classify this._name}&quot;</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Returns the attributes associated with the record</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">attributes: </span><span class="o">-&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">_attributes</span>
+
+    <span class="nv">_change: </span><span class="nf">(record) -&gt;</span>
+      <span class="nx">_</span><span class="p">.</span><span class="nx">each</span> <span class="nx">record</span><span class="p">.</span><span class="nx">_changes</span><span class="p">,</span> <span class="nf">(value, key) -&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>REMOVE FOLLOWING LINE
+name = '[name="' + model._name + "[" + key + "]" + '"]'
+if the value is already the same, don't update the value</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="k">if</span> <span class="nx">$</span><span class="p">(</span><span class="nx">name</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span> <span class="o">!=</span> <span class="nx">value</span>
+          <span class="nx">$</span><span class="p">(</span><span class="nx">name</span><span class="p">).</span><span class="nx">val</span> <span class="nx">value</span>
+
+    <span class="nv">_refresh: </span><span class="nf">(attributes) -&gt;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nv">_attributes = </span><span class="nx">attributes</span> <span class="o">or=</span> <span class="p">{}</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">_parseAssociations</span> <span class="nx">attributes</span>
+      <span class="k">this</span><span class="p">.</span><span class="nv">_prevAttributes = </span><span class="nx">_</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_attributes</span><span class="p">)</span>
+      <span class="k">this</span><span class="p">.</span><span class="nv">_changes = </span><span class="p">{}</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="nx">attributes</span><span class="p">)</span>
+      <span class="k">this</span><span class="p">.</span><span class="nv">_changes = </span><span class="p">{}</span>
+
+    <span class="nv">_parseAssociations: </span><span class="nf">(attributes) -&gt;</span>
+      <span class="nx">_</span><span class="p">.</span><span class="nx">each</span> <span class="nx">model</span><span class="p">.</span><span class="nx">_manyAssociations</span><span class="p">,</span> <span class="nf">(assoc) -&gt;</span>
+        <span class="nv">val = </span><span class="nx">attributes</span><span class="p">[</span><span class="nx">assoc</span><span class="p">]</span>
+        <span class="k">delete</span> <span class="nx">attributes</span><span class="p">[</span><span class="nx">assoc</span><span class="p">]</span>
+        <span class="nx">_</span><span class="p">.</span><span class="nx">each</span> <span class="nx">val</span><span class="p">,</span> <span class="nf">(attrs) -&gt;</span>
+          <span class="nv">instance = </span><span class="nb">eval</span><span class="p">(</span><span class="s2">&quot;new #{_.classify assoc}&quot;</span><span class="p">)</span>
+          <span class="nx">instance</span><span class="p">.</span><span class="nx">_refresh</span><span class="p">(</span><span class="nx">attrs</span><span class="p">)</span>
+          <span class="nv">instance._parent = </span><span class="k">this</span>
+          <span class="k">this</span><span class="p">[</span><span class="nx">assoc</span><span class="p">].</span><span class="nx">add</span> <span class="nx">instance</span>
+        <span class="p">,</span> <span class="k">this</span>
+      <span class="p">,</span> <span class="k">this</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>Get the attribute value.
+post.get("body")</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">get: </span><span class="nf">(key) -&gt;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">_attributes</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>Set the attribute value. Can set multiple keys at once.
+post.set("body", "Lorem Ipsum..")
+post.set({body: "Lorem Ipsum", title: "Fake Latin Lesson"})</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">set: </span><span class="nf">(key, value) -&gt;</span>
+      <span class="k">if</span> <span class="nx">_</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="o">or</span> <span class="nx">_</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>Run value through sanitation if set</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="k">if</span> <span class="nx">model</span><span class="p">.</span><span class="nx">_sanitizers</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span>
+          <span class="nv">value = </span><span class="nx">model</span><span class="p">.</span><span class="nx">_sanitizers</span><span class="p">[</span><span class="nx">key</span><span class="p">].</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p>Delete from changes if changed back to previous value</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="k">if</span> <span class="nx">_</span><span class="p">.</span><span class="nx">isEqual</span> <span class="k">this</span><span class="p">.</span><span class="nx">_prevAttributes</span><span class="p">[</span><span class="nx">key</span><span class="p">],</span> <span class="nx">value</span>
+          <span class="k">delete</span> <span class="k">this</span><span class="p">.</span><span class="nx">_changes</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span></pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <p>Create new changes</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="k">else</span>
+          <span class="k">this</span><span class="p">.</span><span class="nx">_changes</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span></pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <p>Set new value and trigger changes</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="k">this</span><span class="p">.</span><span class="nx">_attributes</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">trigger</span><span class="p">(</span><span class="s2">&quot;change&quot;</span><span class="p">,</span> <span class="p">[</span><span class="k">this</span><span class="p">])</span>
+      <span class="k">else</span>
+        <span class="k">for</span> <span class="nx">k</span><span class="p">,</span> <span class="nx">v</span> <span class="k">of</span> <span class="nx">key</span>
+          <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">k</span><span class="p">,</span> <span class="nx">v</span><span class="p">)</span></pre></div>             </td>           </tr>                               <tr id="section-12">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-12">&#182;</a>               </div>               <p>Set or get an attribute value/values
+post.attr("body", "Lorem Ipsum")
+post.attr("body") #=> "Lorem Ipsum"</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">attr: </span><span class="nf">(key, value) -&gt;</span>
+      <span class="nv">argLen = </span><span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span>
+      <span class="k">return</span> <span class="kc">false</span> <span class="k">if</span> <span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">isUndefined</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="o">or</span> <span class="nx">_</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span> <span class="o">&amp;&amp;</span> <span class="nx">argLen</span> <span class="o">&gt;</span> <span class="mi">0</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">argLen</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_attributes</span>
+      <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">argLen</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
+      <span class="k">else</span> <span class="k">if</span> <span class="nx">_</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="o">or</span> <span class="nx">_</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span>
+      <span class="k">else</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span></pre></div>             </td>           </tr>                               <tr id="section-13">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-13">&#182;</a>               </div>               <p>Indicates if the record has changed or not.
+Returns true or false</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">changed: </span><span class="o">-&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">_changes</span> <span class="o">!=</span> <span class="p">{}</span></pre></div>             </td>           </tr>                               <tr id="section-14">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-14">&#182;</a>               </div>               <p>Changes to the attributes of the record
+Returns {key: "value", key2: "value2"}</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">changes: </span><span class="o">-&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">_changes</span></pre></div>             </td>           </tr>                               <tr id="section-15">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-15">&#182;</a>               </div>               <p>Unbind record from a form. See bindTo()</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">unbindFrom: </span><span class="nf">(form) -&gt;</span>
+      <span class="nx">$</span><span class="p">(</span><span class="nx">form</span><span class="p">).</span><span class="nx">undelegate</span> <span class="s2">&quot;:input&quot;</span><span class="p">,</span> <span class="s2">&quot;change&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">onBoundChange</span>
+      <span class="nx">$</span><span class="p">(</span><span class="nx">form</span><span class="p">).</span><span class="nx">undelegate</span> <span class="s2">&quot;:input&quot;</span><span class="p">,</span> <span class="s2">&quot;keyup&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">onBoundChange</span></pre></div>             </td>           </tr>                               <tr id="section-16">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-16">&#182;</a>               </div>               <p>Bind record to a form. All changes to input/select/textarea fields will automatically update the
+attributes on a record.
+post.bindTo "#post_form"</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">bindTo: </span><span class="nf">(form) -&gt;</span>
+      <span class="nv">self = </span><span class="k">this</span>
+      <span class="nx">$</span><span class="p">(</span><span class="nx">form</span><span class="p">).</span><span class="nx">delegate</span> <span class="s2">&quot;:input&quot;</span><span class="p">,</span> <span class="s2">&quot;change&quot;</span><span class="p">,</span> <span class="p">{</span><span class="nv">record: </span><span class="k">this</span><span class="p">},</span> <span class="k">this</span><span class="p">.</span><span class="nx">onBoundChange</span>
+      <span class="nx">$</span><span class="p">(</span><span class="nx">form</span><span class="p">).</span><span class="nx">delegate</span> <span class="s2">&quot;:input&quot;</span><span class="p">,</span> <span class="s2">&quot;keyup&quot;</span><span class="p">,</span> <span class="p">{</span><span class="nv">record: </span><span class="k">this</span><span class="p">},</span> <span class="k">this</span><span class="p">.</span><span class="nx">onBoundChange</span>
+
+    <span class="nv">onBoundChange: </span><span class="nf">(e) -&gt;</span>
+      <span class="nv">el = </span><span class="nx">$</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">)</span>
+      <span class="nv">record = </span><span class="nx">e</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">record</span>
+      <span class="nv">value = </span><span class="nx">el</span><span class="p">.</span><span class="nx">val</span><span class="p">()</span>
+      <span class="nv">keys = </span><span class="nx">record</span><span class="p">.</span><span class="nx">_parseNameField</span> <span class="nx">el</span>
+      <span class="nx">keys</span><span class="p">.</span><span class="nx">shift</span><span class="p">()</span>
+      <span class="nx">record</span><span class="p">.</span><span class="nx">_parseAttributeKeys</span><span class="p">(</span><span class="nx">keys</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
+
+    <span class="nv">_parseAttributeKeys: </span><span class="nf">(keys, value) -&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-17">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-17">&#182;</a>               </div>               <p>attribute</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">if</span> <span class="nx">keys</span><span class="p">.</span><span class="nx">length</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="nv">key = </span><span class="nx">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">attr</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">value</span></pre></div>             </td>           </tr>                               <tr id="section-18">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-18">&#182;</a>               </div>               <p>association</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">else</span> <span class="k">if</span> <span class="nx">keys</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">1</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_parseAssociationKeys</span><span class="p">(</span><span class="nx">keys</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
+
+    <span class="nv">_parseAssociationKeys: </span><span class="nf">(keys, value) -&gt;</span>
+      <span class="nv">assoc = </span><span class="nx">keys</span><span class="p">.</span><span class="nx">shift</span><span class="p">().</span><span class="nx">replace</span><span class="p">(</span><span class="s2">&quot;_attributes&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+      <span class="nv">uid = </span><span class="nx">keys</span><span class="p">.</span><span class="nx">shift</span><span class="p">()</span>
+      <span class="nv">key = </span><span class="nx">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+      <span class="k">if</span> <span class="o">!</span><span class="k">this</span><span class="p">[</span><span class="nx">assoc</span><span class="p">].</span><span class="nx">_object</span>
+        <span class="nv">obj = </span><span class="k">this</span><span class="p">[</span><span class="nx">assoc</span><span class="p">].</span><span class="nx">findByUid</span><span class="p">(</span><span class="nx">uid</span><span class="p">)</span>
+      <span class="k">else</span>
+        <span class="nv">obj = </span><span class="k">this</span><span class="p">[</span><span class="nx">assoc</span><span class="p">].</span><span class="nx">_object</span>
+      <span class="nx">obj</span><span class="p">.</span><span class="nx">_parseAttributeKeys</span><span class="p">(</span><span class="nx">keys</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span>
+
+    <span class="nv">_parseNameField: </span><span class="nf">(el) -&gt;</span>
+      <span class="nx">_</span><span class="p">.</span><span class="nx">map</span> <span class="nx">el</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">).</span><span class="nx">split</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">),</span> <span class="nf">(p) -&gt;</span> <span class="nx">p</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span></pre></div>             </td>           </tr>                               <tr id="section-19">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-19">&#182;</a>               </div>               <p>Gets the id of the record from the server</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">id: </span><span class="o">-&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span></pre></div>             </td>           </tr>                               <tr id="section-20">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-20">&#182;</a>               </div>               <p>The UID for the record object. This is generated randomly for each record and is never equal to the id()</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">uid: </span><span class="o">-&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">_uid</span></pre></div>             </td>           </tr>                               <tr id="section-21">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-21">&#182;</a>               </div>               <p>Determines if the record is new or not. Looks at the id() and if it is set, then it's not new.
+Returns true or false</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">isNew: </span><span class="o">-&gt;</span> <span class="o">!</span><span class="nx">_</span><span class="p">.</span><span class="nx">isNumber</span> <span class="k">this</span><span class="p">.</span><span class="nx">id</span><span class="p">()</span></pre></div>             </td>           </tr>                               <tr id="section-22">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-22">&#182;</a>               </div>               <p>Displays the validations errors that came from the server response</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">errors: </span><span class="o">-&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">_errors</span></pre></div>             </td>           </tr>                               <tr id="section-23">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-23">&#182;</a>               </div>               <p>Reset validation errors</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">resetErrors: </span><span class="o">-&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nv">_errors = </span><span class="p">{}</span></pre></div>             </td>           </tr>                               <tr id="section-24">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-24">&#182;</a>               </div>               <p>When a record has been marked hasMany or hasOne, they become a child in that association.
+parent() is a convenient way to access the parent object.
+Example, Post.hasMany "comments"
+comment.parent() #=> post record</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">parent: </span><span class="o">-&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">_parent</span></pre></div>             </td>           </tr>                               <tr id="section-25">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-25">&#182;</a>               </div>               <p>Deprecated</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">tagId: </span><span class="o">-&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">_tagId</span></pre></div>             </td>           </tr>                               <tr id="section-26">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-26">&#182;</a>               </div>               <p>Generates JSON for the persistence request. You never need to call this but it's useful to look at
+for debugging purposes. You can also override this method to generate your own toJSON logic.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">toJSON: </span><span class="nf">(options) -&gt;</span>
+      <span class="nv">baseObj = </span><span class="k">if</span> <span class="nx">options</span> <span class="o">and</span> <span class="nx">options</span><span class="p">.</span><span class="nx">child</span>
+        <span class="k">this</span><span class="p">.</span><span class="nv">_json = </span><span class="nx">_</span><span class="p">.</span><span class="nx">clone</span> <span class="k">this</span><span class="p">.</span><span class="nx">attributes</span><span class="p">()</span>
+      <span class="k">else</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_json</span><span class="p">[</span><span class="nx">model</span><span class="p">.</span><span class="nx">_name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">clone</span> <span class="k">this</span><span class="p">.</span><span class="nx">attributes</span><span class="p">()</span>
+
+      <span class="k">this</span><span class="p">.</span><span class="nx">trigger</span> <span class="s2">&quot;data:format&quot;</span><span class="p">,</span> <span class="p">[</span><span class="k">this</span><span class="p">]</span></pre></div>             </td>           </tr>                               <tr id="section-27">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-27">&#182;</a>               </div>               <p>Loop through hasMany associations</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">_</span><span class="p">.</span><span class="nx">each</span> <span class="nx">model</span><span class="p">.</span><span class="nx">_manyAssociations</span><span class="p">,</span> <span class="nf">(association) -&gt;</span>
+        <span class="nx">model</span><span class="p">.</span><span class="nx">prototype</span><span class="p">[</span><span class="nx">association</span><span class="p">].</span><span class="nx">each</span> <span class="nf">(child) -&gt;</span>
+          <span class="nv">childKey = </span><span class="s2">&quot;#{association}_attributes&quot;</span>
+          <span class="nx">baseObj</span><span class="p">[</span><span class="nx">childKey</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span> <span class="nx">unless</span> <span class="nx">baseObj</span><span class="p">[</span><span class="nx">childKey</span><span class="p">]</span>
+          <span class="nx">baseObj</span><span class="p">[</span><span class="nx">childKey</span><span class="p">].</span><span class="nx">push</span> <span class="nx">child</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">({</span><span class="nv">child: </span><span class="kc">true</span><span class="p">})</span>
+        <span class="p">,</span> <span class="k">this</span>
+      <span class="p">,</span> <span class="k">this</span></pre></div>             </td>           </tr>                               <tr id="section-28">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-28">&#182;</a>               </div>               <p>Loop through hasOne associations</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">_</span><span class="p">.</span><span class="nx">each</span> <span class="nx">model</span><span class="p">.</span><span class="nx">_oneAssociations</span><span class="p">,</span> <span class="nf">(association) -&gt;</span>
+        <span class="nv">child = </span><span class="nx">model</span><span class="p">.</span><span class="nx">prototype</span><span class="p">[</span><span class="nx">association</span><span class="p">]</span>
+        <span class="nx">unless</span> <span class="nx">child</span><span class="p">.</span><span class="nx">_fake</span>
+          <span class="k">this</span><span class="p">.</span><span class="nx">_json</span><span class="p">[</span><span class="nx">model</span><span class="p">.</span><span class="nx">_name</span><span class="p">][</span><span class="s2">&quot;#{association}_attributes&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">child</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">({</span><span class="nv">child: </span><span class="kc">true</span><span class="p">})</span>
+      <span class="p">,</span> <span class="k">this</span>
+
+      <span class="k">this</span><span class="p">.</span><span class="nx">_json</span></pre></div>             </td>           </tr>                               <tr id="section-29">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-29">&#182;</a>               </div>               <p>The url used to make REST requests</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">getUrl: </span><span class="nf">(method) -&gt;</span>
+      <span class="nv">path = </span><span class="nx">_</span><span class="p">.</span><span class="nx">pluralize</span> <span class="s2">&quot;/#{model._name}&quot;</span>
+      <span class="nv">path = </span><span class="s2">&quot;#{path}/#{this.id()}&quot;</span> <span class="nx">unless</span> <span class="k">this</span><span class="p">.</span><span class="nx">isNew</span><span class="p">()</span>
+      <span class="nx">path</span></pre></div>             </td>           </tr>                               <tr id="section-30">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-30">&#182;</a>               </div>               <p>Saves the record
+Example:
+post.save
+  success: (validPost) ->
+    console.log "SUCCESS"
+  errors: (invalidPost) ->
+    console.log invalidPost.errors</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">save: </span><span class="nf">(options) -&gt;</span>
+      <span class="nv">method = </span><span class="k">if</span> <span class="k">this</span><span class="p">.</span><span class="nx">isNew</span><span class="p">()</span> <span class="k">then</span> <span class="s2">&quot;create&quot;</span> <span class="k">else</span> <span class="s2">&quot;update&quot;</span>
+
+      <span class="nv">record = </span><span class="k">this</span>
+
+      <span class="nx">options</span> <span class="o">or=</span> <span class="p">{}</span>
+      <span class="nv">success = </span><span class="nx">options</span><span class="p">.</span><span class="nx">success</span>
+      <span class="nv">error = </span><span class="nx">options</span><span class="p">.</span><span class="nx">error</span>
+
+      <span class="nv">options.success = </span><span class="nf">(resp, status, xhr) -&gt;</span>
+        <span class="nx">record</span><span class="p">.</span><span class="nx">resetErrors</span><span class="p">()</span>
+        <span class="nx">unless</span> <span class="nx">_</span><span class="p">.</span><span class="nx">isEmpty</span> <span class="nx">resp</span>
+          <span class="nx">record</span><span class="p">.</span><span class="nx">attr</span> <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="nx">resp</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span>
+        <span class="nx">success</span> <span class="nx">record</span><span class="p">,</span> <span class="nx">resp</span><span class="p">,</span> <span class="nx">xhr</span>
+        <span class="nx">record</span><span class="p">.</span><span class="nx">trigger</span> <span class="s2">&quot;save:after&quot;</span><span class="p">,</span> <span class="p">[</span><span class="nx">record</span><span class="p">]</span>
+      <span class="nv">options.error = </span><span class="nf">(resp, status, xhr) -&gt;</span>
+        <span class="nv">record._errors = </span><span class="nx">$</span><span class="p">.</span><span class="nx">parseJSON</span><span class="p">(</span><span class="nx">resp</span><span class="p">.</span><span class="nx">responseText</span><span class="p">)</span>
+        <span class="nx">error</span> <span class="nx">record</span><span class="p">,</span> <span class="nx">resp</span><span class="p">,</span> <span class="nx">xhr</span> <span class="k">if</span> <span class="nx">error</span>
+        <span class="nx">record</span><span class="p">.</span><span class="nx">trigger</span> <span class="s2">&quot;save:after&quot;</span><span class="p">,</span> <span class="p">[</span><span class="nx">record</span><span class="p">]</span>
+
+      <span class="nx">record</span><span class="p">.</span><span class="nx">trigger</span> <span class="s2">&quot;save:before&quot;</span><span class="p">,</span> <span class="p">[</span><span class="nx">record</span><span class="p">]</span>
+
+      <span class="nx">Model</span><span class="p">.</span><span class="nx">Sync</span><span class="p">(</span><span class="nx">record</span><span class="p">,</span> <span class="nx">method</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span></pre></div>             </td>           </tr>                               <tr id="section-31">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-31">&#182;</a>               </div>               <p>Deprecated.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">toData: </span><span class="o">-&gt;</span> <span class="c1"># Do nothing</span></pre></div>             </td>           </tr>                               <tr id="section-32">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-32">&#182;</a>               </div>               <p>Associations</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span> <span class="nx">model</span><span class="p">,</span>
+    <span class="nv">_manyAssociations: </span><span class="p">[]</span>
+    <span class="nv">_oneAssociations: </span><span class="p">[]</span>
+    <span class="nv">_sanitizers: </span><span class="p">{}</span>
+
+    <span class="nv">listAssociations: </span><span class="o">-&gt;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">_manyAssociations</span><span class="p">.</span><span class="nx">concat</span> <span class="k">this</span><span class="p">.</span><span class="nx">_oneAssociations</span></pre></div>             </td>           </tr>                               <tr id="section-33">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-33">&#182;</a>               </div>               <p>Sets a hasMany association for the model
+Post.hasMany "comments"</p>
+
+<p>post.comments #=> [{comment1...}, {comment2...}]</p>
+
+<p>You can also extend the collection methods by using extend
+Post.hasMany "comments",
+  extend:
+    popularComments: ->
+      this.records = this.sortBy (comment) -> comment.position()</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">hasMany: </span><span class="nf">(name, options) -&gt;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">_manyAssociations</span><span class="p">.</span><span class="nx">push</span> <span class="nx">name</span>
+      <span class="nv">manyArray = </span><span class="p">{}</span>
+      <span class="nv">collection = </span><span class="k">new</span> <span class="nx">Model</span><span class="p">.</span><span class="nx">Collection</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span>
+
+      <span class="k">if</span> <span class="nx">options</span> <span class="o">and</span> <span class="nx">options</span><span class="p">.</span><span class="nx">extend</span>
+        <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span> <span class="nx">collection</span><span class="p">,</span> <span class="nx">options</span><span class="p">.</span><span class="nx">extend</span>
+
+      <span class="nx">manyArray</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">collection</span>
+      <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span> <span class="nx">model</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="nx">manyArray</span></pre></div>             </td>           </tr>                               <tr id="section-34">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-34">&#182;</a>               </div>               <p>Sets a hasOne association for the model
+Post.hasOne "user"</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">hasOne: </span><span class="nf">(name) -&gt;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">_oneAssociations</span><span class="p">.</span><span class="nx">push</span> <span class="nx">name</span>
+      <span class="nv">association = </span><span class="k">new</span> <span class="nx">Model</span><span class="p">.</span><span class="nx">One</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span>
+      <span class="nv">oneObj = </span><span class="p">{}</span>
+      <span class="nx">oneObj</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">association</span>
+      <span class="nx">oneObj</span><span class="p">[</span><span class="s2">&quot;build_#{name}&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-&gt;</span> <span class="nx">association</span><span class="p">.</span><span class="nx">build</span><span class="p">()</span>
+      <span class="nx">oneObj</span><span class="p">[</span><span class="s2">&quot;clear_#{name}&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-&gt;</span> <span class="nx">association</span><span class="p">.</span><span class="nx">clear</span><span class="p">()</span>
+      <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span> <span class="nx">model</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="nx">oneObj</span></pre></div>             </td>           </tr>                               <tr id="section-35">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-35">&#182;</a>               </div>               <p>Sanitize incoming record attribute data
+Task.sanitize "hours", (hours) -> parseInt(hours)</p>
+
+<p>Then if you do this:
+task.set("hours", "5")</p>
+
+<p>You should get:
+task.get("hours") #=> 5</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">sanitize: </span><span class="nf">(key, callback) -&gt;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">_sanitizers</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">callback</span>
+
+    <span class="nv">newCollection: </span><span class="o">-&gt;</span>
+      <span class="k">new</span> <span class="nx">Model</span><span class="p">.</span><span class="nx">Collection</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_name</span><span class="p">)</span>
+
+    <span class="nv">fetch: </span><span class="nf">(params) -&gt;</span>
+      <span class="nx">model</span><span class="p">.</span><span class="nx">newCollection</span><span class="p">().</span><span class="nx">fetch</span><span class="p">(</span><span class="nx">params</span><span class="p">)</span>
+
+    <span class="nv">query: </span><span class="nf">(options) -&gt;</span>
+      <span class="nx">model</span><span class="p">.</span><span class="nx">newCollection</span><span class="p">().</span><span class="nx">query</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span>
+
+  <span class="nx">model</span>
+
+<span class="k">this</span><span class="p">.</span><span class="nv">Model.Events =</span>
+  <span class="nv">bind: </span><span class="nf">(event, callback) -&gt;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nv">callbacks = </span><span class="k">this</span><span class="p">.</span><span class="nx">callbacks</span> <span class="o">||</span> <span class="p">{}</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">callbacks</span><span class="p">[</span><span class="nx">event</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">callbacks</span><span class="p">[</span><span class="nx">event</span><span class="p">]</span> <span class="o">||</span> <span class="p">[]</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">callbacks</span><span class="p">[</span><span class="nx">event</span><span class="p">].</span><span class="nx">push</span><span class="p">(</span><span class="nx">callback</span><span class="p">)</span>
+    <span class="k">this</span>
+
+  <span class="nv">trigger: </span><span class="nf">(name, data) -&gt;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nv">callbacks = </span><span class="k">this</span><span class="p">.</span><span class="nx">callbacks</span> <span class="o">||</span> <span class="p">{}</span>
+
+    <span class="nv">callbacks = </span><span class="k">this</span><span class="p">.</span><span class="nx">callbacks</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="nx">callbacks</span>
+      <span class="k">for</span> <span class="nx">callback</span> <span class="k">in</span> <span class="nx">callbacks</span>
+        <span class="nx">callback</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">data</span> <span class="o">||</span> <span class="p">[])</span>
+
+    <span class="k">this</span></pre></div>             </td>           </tr>                               <tr id="section-36">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-36">&#182;</a>               </div>               <p>Ajax persistence</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="k">this</span><span class="p">.</span><span class="nv">Model.Sync = </span><span class="nf">(obj, method, options) -&gt;</span>
+  <span class="nv">methodVerbs = </span><span class="p">{</span>
+    <span class="s2">&quot;create&quot;</span><span class="o">:</span> <span class="s2">&quot;POST&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;update&quot;</span><span class="o">:</span> <span class="s2">&quot;PUT&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;delete&quot;</span><span class="o">:</span> <span class="s2">&quot;DELETE&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;read&quot;</span><span class="o">:</span>   <span class="s2">&quot;GET&quot;</span>
+  <span class="p">}</span>
+
+  <span class="nv">params = </span><span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+    <span class="nv">type: </span>       <span class="nx">methodVerbs</span><span class="p">[</span><span class="nx">method</span><span class="p">],</span>
+    <span class="nv">contentType: </span><span class="s2">&quot;application/json&quot;</span><span class="p">,</span>
+    <span class="nv">dataType: </span>   <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+    <span class="nv">processData: </span><span class="k">if</span> <span class="nx">method</span> <span class="o">==</span> <span class="s2">&quot;read&quot;</span> <span class="k">then</span> <span class="kc">true</span> <span class="k">else</span> <span class="kc">false</span><span class="p">},</span> <span class="nx">options</span><span class="p">)</span>
+
+  <span class="nv">params.url = </span><span class="nx">obj</span><span class="p">.</span><span class="nx">getUrl</span><span class="p">(</span><span class="nx">method</span><span class="p">)</span>
+
+  <span class="nx">unless</span> <span class="nx">options</span><span class="p">.</span><span class="nx">data</span>
+    <span class="nv">data = </span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">()</span>
+    <span class="nv">params.data = </span><span class="nx">data</span> <span class="nx">unless</span> <span class="nx">data</span> <span class="o">==</span> <span class="s2">&quot;{}&quot;</span>
+
+  <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">(</span><span class="nx">params</span><span class="p">)</span></pre></div>             </td>           </tr>                               <tr id="section-37">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-37">&#182;</a>               </div>               <p>One</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="k">this</span><span class="p">.</span><span class="nv">Model.One = </span><span class="nf">(name) -&gt;</span>
+  <span class="k">this</span><span class="p">.</span><span class="nv">_name = </span><span class="nx">name</span>
+  <span class="k">this</span><span class="p">.</span><span class="nv">_fake = </span><span class="kc">true</span>
+  <span class="k">this</span>
+
+<span class="nx">_</span><span class="p">.</span><span class="nx">extend</span> <span class="nx">Model</span><span class="p">.</span><span class="nx">One</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span>
+  <span class="nv">build: </span><span class="o">-&gt;</span>
+    <span class="nv">record = </span><span class="nb">eval</span><span class="p">(</span><span class="s2">&quot;new #{_.classify this._name}&quot;</span><span class="p">)</span>
+    <span class="nv">record._parent = </span><span class="k">this</span><span class="p">.</span><span class="nx">parent</span><span class="p">()</span> <span class="k">if</span> <span class="k">this</span><span class="p">.</span><span class="nx">parent</span><span class="p">()</span>
+    <span class="k">this</span><span class="p">.</span><span class="nv">_object = </span><span class="nx">record</span>
+
+  <span class="nv">clear: </span><span class="o">-&gt;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">parent</span><span class="p">()[</span><span class="k">this</span><span class="p">.</span><span class="nx">_name</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span>
+
+  <span class="nv">parent: </span><span class="o">-&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">_parent</span></pre></div>             </td>           </tr>                               <tr id="section-38">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-38">&#182;</a>               </div>               <p>Collection</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="k">this</span><span class="p">.</span><span class="nv">Model.Collection = </span><span class="nf">(name) -&gt;</span>
+  <span class="k">this</span><span class="p">.</span><span class="nv">_name = </span><span class="nx">_</span><span class="p">.</span><span class="nx">singularize</span> <span class="nx">name</span>
+  <span class="k">this</span><span class="p">.</span><span class="nv">_options = </span><span class="p">{}</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">_reset</span><span class="p">()</span>
+  <span class="k">this</span><span class="p">.</span><span class="nv">url = </span><span class="k">this</span><span class="p">.</span><span class="nx">getUrl</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">bind</span> <span class="s2">&quot;change&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_change</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">bind</span> <span class="s2">&quot;add&quot;</span><span class="p">,</span> <span class="nf">(collection) -&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">trigger</span><span class="p">(</span><span class="s2">&quot;refresh&quot;</span><span class="p">,</span> <span class="p">[</span><span class="nx">collection</span><span class="p">])</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">bind</span> <span class="s2">&quot;remove&quot;</span><span class="p">,</span> <span class="nf">(collection) -&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">trigger</span><span class="p">(</span><span class="s2">&quot;refresh&quot;</span><span class="p">,</span> <span class="p">[</span><span class="nx">collection</span><span class="p">])</span>
+  <span class="k">this</span>
+
+<span class="nx">_</span><span class="p">.</span><span class="nx">extend</span> <span class="nx">Model</span><span class="p">.</span><span class="nx">Collection</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="nx">Model</span><span class="p">.</span><span class="nx">Events</span><span class="p">,</span>
+  <span class="nv">getUrl: </span><span class="o">-&gt;</span>
+    <span class="s2">&quot;/#{_.pluralize this._name}&quot;</span>
+
+  <span class="nv">add: </span><span class="nf">(records) -&gt;</span>
+    <span class="k">if</span> <span class="nx">_</span><span class="p">.</span><span class="nx">isArray</span> <span class="nx">records</span>
+      <span class="nx">_</span><span class="p">.</span><span class="nx">each</span> <span class="nx">records</span><span class="p">,</span> <span class="nf">(record) -&gt;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_add</span> <span class="nx">record</span>
+      <span class="p">,</span> <span class="k">this</span>
+    <span class="k">else</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">_add</span> <span class="nx">records</span>
+
+  <span class="nv">removeAll: </span><span class="o">-&gt;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nv">records = </span><span class="p">[]</span></pre></div>             </td>           </tr>                               <tr id="section-39">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-39">&#182;</a>               </div>               <p>this.remove this.records</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">remove: </span><span class="nf">(records) -&gt;</span>
+    <span class="k">if</span> <span class="nx">_</span><span class="p">.</span><span class="nx">isArray</span> <span class="nx">records</span>
+      <span class="nx">_</span><span class="p">.</span><span class="nx">each</span> <span class="nx">records</span><span class="p">,</span> <span class="nf">(record) -&gt;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_remove</span> <span class="nx">record</span>
+      <span class="p">,</span> <span class="k">this</span>
+    <span class="k">else</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">_remove</span> <span class="nx">records</span>
+
+  <span class="nv">_change: </span><span class="nf">(record) -&gt;</span>
+    <span class="nv">self = </span><span class="k">this</span>
+    <span class="nx">_</span><span class="p">.</span><span class="nx">each</span> <span class="nx">record</span><span class="p">.</span><span class="nx">_changes</span><span class="p">,</span> <span class="nf">(value, key) -&gt;</span>
+      <span class="nv">index_id = </span><span class="nx">record</span><span class="p">.</span><span class="nx">tagId</span><span class="p">()</span>
+      <span class="nv">current_model_name = </span><span class="nx">_</span><span class="p">.</span><span class="nx">pluralize</span><span class="p">(</span><span class="nx">record</span><span class="p">.</span><span class="nx">_name</span><span class="p">)</span>
+      <span class="nv">name = </span><span class="s1">&#39;[name=&quot;&#39;</span> <span class="o">+</span> <span class="nx">self</span><span class="p">.</span><span class="nx">parent</span><span class="p">().</span><span class="nx">_name</span> <span class="o">+</span> <span class="s2">&quot;[#{current_model_name}_attributes][#{index_id}][#{key}]&quot;</span> <span class="o">+</span> <span class="s1">&#39;&quot;]&#39;</span>
+      <span class="nx">$</span><span class="p">(</span><span class="nx">name</span><span class="p">).</span><span class="nx">val</span> <span class="nx">value</span>
+
+  <span class="nv">parent: </span><span class="o">-&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">_parent</span>
+
+  <span class="nv">get: </span><span class="nf">(id) -&gt;</span>
+    <span class="k">return</span> <span class="kc">null</span> <span class="k">if</span> <span class="nx">_</span><span class="p">.</span><span class="nx">isNull</span> <span class="nx">id</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_byId</span><span class="p">[</span><span class="k">if</span> <span class="o">!</span><span class="nx">_</span><span class="p">.</span><span class="nx">isNull</span> <span class="nx">id</span><span class="p">.</span><span class="nx">id</span> <span class="k">then</span> <span class="nx">id</span><span class="p">.</span><span class="nx">id</span> <span class="k">else</span> <span class="nx">id</span><span class="p">]</span>
+
+  <span class="nv">refresh: </span><span class="nf">(records) -&gt;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">_reset</span><span class="p">()</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">records</span><span class="p">)</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">trigger</span><span class="p">(</span><span class="s2">&quot;refresh&quot;</span><span class="p">,</span> <span class="p">[</span><span class="k">this</span><span class="p">])</span>
+    <span class="k">this</span>
+
+  <span class="nv">fetch: </span><span class="nf">(params) -&gt;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="nv">data: </span><span class="nx">params</span><span class="p">)</span>
+    <span class="k">this</span>
+
+  <span class="nv">findByTagId: </span><span class="nf">(tag_id) -&gt;</span>
+    <span class="nx">_</span><span class="p">.</span><span class="nx">detect</span> <span class="k">this</span><span class="p">.</span><span class="nx">records</span><span class="p">,</span> <span class="nf">(element) -&gt;</span> <span class="nx">element</span><span class="p">.</span><span class="nx">tagId</span><span class="p">()</span> <span class="o">==</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">tag_id</span><span class="p">)</span>
+
+  <span class="nv">removeByTagId: </span><span class="nf">(tag_id) -&gt;</span>
+    <span class="nv">record = </span><span class="nx">_</span><span class="p">.</span><span class="nx">detect</span> <span class="k">this</span><span class="p">.</span><span class="nx">records</span><span class="p">,</span> <span class="nf">(element) -&gt;</span> <span class="nx">element</span><span class="p">.</span><span class="nx">tagId</span><span class="p">()</span> <span class="o">==</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">tag_id</span><span class="p">)</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">_remove</span><span class="p">(</span><span class="nx">record</span><span class="p">)</span> <span class="k">if</span> <span class="nx">record</span>
+
+  <span class="nv">findByUid: </span><span class="nf">(uid) -&gt;</span>
+    <span class="nx">_</span><span class="p">.</span><span class="nx">detect</span> <span class="k">this</span><span class="p">.</span><span class="nx">records</span><span class="p">,</span> <span class="nf">(record) -&gt;</span> <span class="nx">record</span><span class="p">.</span><span class="nx">uid</span><span class="p">()</span> <span class="o">==</span> <span class="nx">uid</span>
+
+  <span class="nv">removeByUid: </span><span class="nf">(uid) -&gt;</span>
+    <span class="nv">record = </span><span class="k">this</span><span class="p">.</span><span class="nx">findByUid</span><span class="p">(</span><span class="nx">uid</span><span class="p">)</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">_remove</span><span class="p">(</span><span class="nx">record</span><span class="p">)</span> <span class="k">if</span> <span class="nx">record</span>
+
+  <span class="nv">query: </span><span class="nf">(options) -&gt;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nv">_options = </span><span class="nx">options</span> <span class="o">or=</span> <span class="p">{}</span>
+    <span class="nv">collection = </span><span class="k">this</span>
+    <span class="nv">success = </span><span class="nx">options</span><span class="p">.</span><span class="nx">success</span>
+    <span class="nv">options.success = </span><span class="nf">(resp, status, xhr) -&gt;</span>
+      <span class="nx">collection</span><span class="p">.</span><span class="nx">refresh</span><span class="p">(</span><span class="nx">resp</span><span class="p">)</span>
+      <span class="nx">success</span><span class="p">(</span><span class="nx">collection</span><span class="p">,</span> <span class="nx">resp</span><span class="p">)</span> <span class="k">if</span> <span class="nx">success</span>
+
+    <span class="nx">Model</span><span class="p">.</span><span class="nx">Sync</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s2">&quot;read&quot;</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span>
+    <span class="k">this</span>
+
+  <span class="nv">toJSON: </span><span class="o">-&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">_options</span>
+
+  <span class="nv">pluck: </span><span class="nf">(attr) -&gt;</span>
+    <span class="nx">_</span><span class="p">.</span><span class="nx">map</span> <span class="k">this</span><span class="p">.</span><span class="nx">records</span><span class="p">,</span> <span class="nf">(record) -&gt;</span>
+      <span class="nx">record</span><span class="p">.</span><span class="nx">get</span> <span class="nx">attr</span>
+
+  <span class="nv">_add: </span><span class="nf">(record) -&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-40">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-40">&#182;</a>               </div>               <p>If a json object is passed, convert to record object</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">unless</span> <span class="nx">record</span><span class="p">.</span><span class="nx">_name</span>
+      <span class="nv">attr = </span><span class="nx">record</span>
+      <span class="nv">record = </span><span class="nb">eval</span><span class="p">(</span><span class="s2">&quot;new #{_.classify this._name}&quot;</span><span class="p">)</span>
+      <span class="nx">record</span><span class="p">.</span><span class="nx">_refresh</span><span class="p">(</span><span class="nx">attr</span><span class="p">)</span>
+
+    <span class="k">this</span><span class="p">.</span><span class="nx">_bindRecordEvents</span><span class="p">(</span><span class="nx">record</span><span class="p">)</span>
+    <span class="nv">record._parent = </span><span class="k">this</span><span class="p">.</span><span class="nx">parent</span><span class="p">()</span> <span class="k">if</span> <span class="k">this</span><span class="p">.</span><span class="nx">parent</span><span class="p">()</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">records</span><span class="p">.</span><span class="nx">push</span> <span class="nx">record</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">length</span><span class="o">++</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">trigger</span><span class="p">(</span><span class="s2">&quot;add&quot;</span><span class="p">,</span> <span class="p">[</span><span class="nx">record</span><span class="p">])</span>
+    <span class="nx">record</span>
+
+  <span class="nv">_remove: </span><span class="nf">(record) -&gt;</span>
+    <span class="nv">index = </span><span class="k">this</span><span class="p">.</span><span class="nx">records</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">record</span><span class="p">)</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">records</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">index</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">trigger</span><span class="p">(</span><span class="s2">&quot;remove&quot;</span><span class="p">,</span> <span class="p">[</span><span class="nx">record</span><span class="p">])</span></pre></div>             </td>           </tr>                               <tr id="section-41">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-41">&#182;</a>               </div>               <p>Deprecate this in favor of dispatching a change event after a bind to remove</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">trigger</span><span class="p">(</span><span class="s2">&quot;change&quot;</span><span class="p">,</span> <span class="p">[</span><span class="nx">record</span><span class="p">])</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">length</span><span class="o">--</span>
+
+  <span class="nv">_reset: </span><span class="o">-&gt;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nv">length = </span><span class="mi">0</span>
+    <span class="k">this</span><span class="p">.</span><span class="nv">records = </span><span class="p">[]</span>
+    <span class="k">this</span><span class="p">.</span><span class="nv">_byId = </span><span class="p">{}</span>
+
+  <span class="nv">_bindRecordEvents: </span><span class="nf">(record) -&gt;</span>
+    <span class="nv">collection = </span><span class="k">this</span>
+    <span class="nx">record</span><span class="p">.</span><span class="nx">bind</span> <span class="s2">&quot;change&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+      <span class="nx">collection</span><span class="p">.</span><span class="nx">trigger</span> <span class="s2">&quot;change&quot;</span><span class="p">,</span> <span class="p">[</span><span class="nx">record</span><span class="p">]</span></pre></div>             </td>           </tr>                               <tr id="section-42">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-42">&#182;</a>               </div>               <p>Underscore methods that we want to implement on the Collection.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">methods = </span><span class="p">[</span><span class="s1">&#39;forEach&#39;</span><span class="p">,</span> <span class="s1">&#39;each&#39;</span><span class="p">,</span> <span class="s1">&#39;map&#39;</span><span class="p">,</span> <span class="s1">&#39;reduce&#39;</span><span class="p">,</span> <span class="s1">&#39;reduceRight&#39;</span><span class="p">,</span> <span class="s1">&#39;find&#39;</span><span class="p">,</span> <span class="s1">&#39;detect&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;filter&#39;</span><span class="p">,</span> <span class="s1">&#39;select&#39;</span><span class="p">,</span> <span class="s1">&#39;reject&#39;</span><span class="p">,</span> <span class="s1">&#39;every&#39;</span><span class="p">,</span> <span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="s1">&#39;some&#39;</span><span class="p">,</span> <span class="s1">&#39;any&#39;</span><span class="p">,</span> <span class="s1">&#39;include&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;invoke&#39;</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="s1">&#39;sortBy&#39;</span><span class="p">,</span> <span class="s1">&#39;sortedIndex&#39;</span><span class="p">,</span> <span class="s1">&#39;toArray&#39;</span><span class="p">,</span> <span class="s1">&#39;size&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;first&#39;</span><span class="p">,</span> <span class="s1">&#39;rest&#39;</span><span class="p">,</span> <span class="s1">&#39;last&#39;</span><span class="p">,</span> <span class="s1">&#39;without&#39;</span><span class="p">,</span> <span class="s1">&#39;indexOf&#39;</span><span class="p">,</span> <span class="s1">&#39;lastIndexOf&#39;</span><span class="p">,</span> <span class="s1">&#39;isEmpty&#39;</span><span class="p">]</span>
+
+<span class="nx">_</span><span class="p">.</span><span class="nx">each</span> <span class="nx">methods</span><span class="p">,</span> <span class="nf">(method) -&gt;</span>
+  <span class="nx">Model</span><span class="p">.</span><span class="nx">Collection</span><span class="p">.</span><span class="nx">prototype</span><span class="p">[</span><span class="nx">method</span><span class="p">]</span> <span class="o">=</span> <span class="o">-&gt;</span>
+    <span class="nx">_</span><span class="p">[</span><span class="nx">method</span><span class="p">].</span><span class="nx">apply</span><span class="p">(</span><span class="nx">_</span><span class="p">,</span> <span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">records</span><span class="p">].</span><span class="nx">concat</span><span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">toArray</span><span class="p">(</span><span class="nx">arguments</span><span class="p">)))</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

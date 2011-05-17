@@ -29,9 +29,6 @@ this.Model = (name, options, func) ->
 
     _change: (record) ->
       _.each record._changes, (value, key) ->
-        # REMOVE FOLLOWING LINE
-        #name = '[name="' + model._name + "[" + key + "]" + '"]'
-        # if the value is already the same, don't update the value
         if $(name).val() != value
           $(name).val value
 
