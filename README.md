@@ -16,6 +16,10 @@ Corpus.js is a Javascript framework written entirely in CoffeeScript that makes 
 * Underscore (http://documentcloud.github.com/underscore/)
 * Everything inside of the lib directory. https://github.com/lancecarlson/corpus/tree/master/lib
 
+Make sure the js files load in the following order:
+
+JQuery and Underscore, then everything in lib, then model and route
+
 ## Routing/Controllers
 
 You can choose to use corpus routing or not. Presently it's only purpose is to load specific views/models when a specific page is loaded. This is helpful for consolidating behavior per page rather than having all of your JQuery selectors running on every page. 
@@ -45,7 +49,9 @@ To maintain state in the browser, Corpus provides a light-weight model layer tha
 * Event system
 * Collections
 
-### Example (post.coffee)
+### Example 
+
+#### post.coffee
 
 ```coffeescript
 this.Post = Model "post"
@@ -66,16 +72,35 @@ _.extend Post.prototype,
     this.user.name()
 ```
 
+#### comment.coffee
+
+```coffeescript
+this.Comment = Model "comment"
+```
+
 This allows you to do the following:
 
 ```coffeescript
 post = new Post
 post.set("body", "Lorem ipsum...")
+comment = new Comment(body: "Some Comment")
+post.comments.add comment
 post.save
   success:
     # Do whatever
   error:
     # Validation errors
+```
+
+The json will look like:
+
+```javascript
+{ 
+  body: "Lorem Ipsum",
+  comments: [
+    body: "Lorem Ipsum"
+  ]
+}
 ```
 
 ## Views:
@@ -102,4 +127,21 @@ this.PostView.Form = (post) ->
           $("#error_explanation ul").append("<li>" + value + " " + message + "</li>");
         $("#error_explanation").show()
 ```
-    
+
+## Recommended project directory structure using Barista + Ruby on Rails:
+
+If you're using jammit with barista, you should use something like this:
+
+```
+app/coffeescripts/controllers/     # all of your controllers go here
+app/coffeescripts/models/          # all of your models go here
+app/coffeescripts/views/           # all of your views go here
+app/coffeescripts/vendor/          # all of your vendor files like model.coffee and route.coffee go here
+app/coffeescripts/lib/             # all if your library files like underscore.inflection.coffee go here
+```
+
+If you're using barista, this should generate each of the above directories inside of public/javascripts/.
+
+## Recommended project directory structure using Rails 3:
+
+-- Coming Soon --
