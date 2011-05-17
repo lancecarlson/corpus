@@ -9,6 +9,6 @@
     "underscore"  : ">=1.1.2"
   },
   "lib"           : ".",
-  "main"          : "model.js",
+  "main"          : "corpus.js",
   "version"       : "0.0.1"
 }
