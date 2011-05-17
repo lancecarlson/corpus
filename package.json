@@ -1,0 +1,14 @@
+{
+  "name"          : "corpus",
+  "description"   : "Corpus.js is a Javascript framework for large client side web applications.",
+  "url"           : "http://github.com/lancecarlson/corpus",
+  "keywords"      : ["util", "server", "client", "browser"],
+  "author"        : "Lance Carlson <lcarlson@healpay.com>",
+  "contributors"  : [],
+  "dependencies"  : {
+    "underscore"  : ">=1.1.2"
+  },
+  "lib"           : ".",
+  "main"          : "model.js",
+  "version"       : "0.0.1"
+}
