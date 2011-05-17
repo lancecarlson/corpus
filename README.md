@@ -45,7 +45,9 @@ To maintain state in the browser, Corpus provides a light-weight model layer tha
 * Event system
 * Collections
 
-### Example (post.coffee)
+### Example 
+
+#### post.coffee
 
 ```coffeescript
 this.Post = Model "post"
@@ -66,16 +68,34 @@ _.extend Post.prototype,
     this.user.name()
 ```
 
+#### comment.coffee
+
+```coffeescript
+this.Comment = Model "comment"
+```
+
 This allows you to do the following:
 
 ```coffeescript
 post = new Post
 post.set("body", "Lorem ipsum...")
+comment = new Comment(body: "Some Comment")
+post.comments.add comment
 post.save
   success:
     # Do whatever
   error:
     # Validation errors
+```
+
+The json will look like:
+
+```javascript
+{ 
+  body: "Lorem Ipsum",
+  comments: [
+    body: "Lorem Ipsum"
+  ]
 ```
 
 ## Views:
