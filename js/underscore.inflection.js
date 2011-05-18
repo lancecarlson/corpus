@@ -1,7 +1,3 @@
-/* DO NOT MODIFY. This file was compiled Tue, 26 Apr 2011 05:49:53 GMT from
- * /Users/lancelotcarlson/Projects/healpay/app/coffeescripts/lib/underscore.inflection.coffee
- */
-
 (function() {
   var _s;
   _s = {
