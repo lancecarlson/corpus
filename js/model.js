@@ -1,7 +1,3 @@
-/* DO NOT MODIFY. This file was compiled Mon, 16 May 2011 21:13:37 GMT from
- * /Users/lancelotcarlson/Projects/healpay/app/coffeescripts/vendor/model.coffee
- */
-
 (function() {
   var methods;
   this.Model = function(name, options, func) {
@@ -198,8 +194,8 @@
         _.each(model._oneAssociations, function(association) {
           var child;
           child = model.prototype[association];
-          if (!child._fake) {
-            return this._json[model._name]["" + association + "_attributes"] = child.toJSON({
+          if (child._object) {
+            return baseObj["" + association + "_attributes"] = child._object.toJSON({
               child: true
             });
           }
@@ -333,7 +329,6 @@
   };
   this.Model.One = function(name) {
     this._name = name;
-    this._fake = true;
     return this;
   };
   _.extend(Model.One.prototype, {

@@ -194,9 +194,9 @@ this.Model = (name, options, func) ->
       # Loop through hasOne associations
       _.each model._oneAssociations, (association) ->
         child = model.prototype[association]
-        unless child._fake
-          this._json[model._name]["#{association}_attributes"] = child.toJSON({child: true})
+        baseObj["#{association}_attributes"] = child._object.toJSON({child: true}) if child._object
       , this
+
 
       this._json
 
@@ -347,7 +347,6 @@ this.Model.Sync = (obj, method, options) ->
 # One
 this.Model.One = (name) ->
   this._name = name
-  this._fake = true
   this
 
 _.extend Model.One.prototype,
