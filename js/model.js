@@ -1,7 +1,3 @@
-/* DO NOT MODIFY. This file was compiled Mon, 16 May 2011 21:13:37 GMT from
- * /Users/lancelotcarlson/Projects/healpay/app/coffeescripts/vendor/model.coffee
- */
-
 (function() {
   var methods;
   this.Model = function(name, options, func) {
@@ -9,327 +5,23 @@
     model = function(attributes) {
       var self;
       self = this;
-      this._tagId = null;
       this._refresh(attributes);
       this._errors = {};
       this._parent = {};
+      this._model = model;
       this._name = name;
       this._json = {};
       this._uid = _.uniqueId("" + this._name + "_");
-      this.bind("change", this._change);
-      this.bind("data:format", this.toData);
-      _.each(model.listAssociations(), function(associationName) {
-        return self[associationName]._parent = self;
-      });
       this.initialize(attributes);
       return this;
     };
+    Model.Module.extend.call(model, Model.Module);
     model._name = name;
-    _.extend(model.prototype, Model.Events, {
-      initialize: function() {},
-      modelName: function() {
-        return "" + (_.classify(this._name));
-      },
-      attributes: function() {
-        return this._attributes;
-      },
-      _change: function(record) {
-        return _.each(record._changes, function(value, key) {
-          if ($(name).val() !== value) {
-            return $(name).val(value);
-          }
-        });
-      },
-      _refresh: function(attributes) {
-        this._attributes = attributes || (attributes = {});
-        this._parseAssociations(attributes);
-        this._prevAttributes = _.clone(this._attributes);
-        this._changes = {};
-        this.attr(attributes);
-        return this._changes = {};
-      },
-      _parseAssociations: function(attributes) {
-        return _.each(model._manyAssociations, function(assoc) {
-          var val;
-          val = attributes[assoc];
-          delete attributes[assoc];
-          return _.each(val, function(attrs) {
-            var instance;
-            instance = eval("new " + (_.classify(assoc)));
-            instance._refresh(attrs);
-            instance._parent = this;
-            return this[assoc].add(instance);
-          }, this);
-        }, this);
-      },
-      get: function(key) {
-        return this._attributes[key];
-      },
-      set: function(key, value) {
-        var k, v, _results;
-        if (_.isString(key) || _.isNumber(key)) {
-          if (model._sanitizers[key]) {
-            value = model._sanitizers[key].call(this, value);
-          }
-          if (_.isEqual(this._prevAttributes[key], value)) {
-            delete this._changes[key];
-          } else {
-            this._changes[key] = value;
-          }
-          this._attributes[key] = value;
-          return this.trigger("change", [this]);
-        } else {
-          _results = [];
-          for (k in key) {
-            v = key[k];
-            _results.push(this.set(k, v));
-          }
-          return _results;
-        }
-      },
-      attr: function(key, value) {
-        var argLen;
-        argLen = arguments.length;
-        if ((_.isUndefined(key) || _.isEmpty(key)) && argLen > 0) {
-          return false;
-        }
-        if (argLen === 0) {
-          return this._attributes;
-        } else if (argLen === 2) {
-          return this.set(key, value);
-        } else if (_.isString(key) || _.isNumber(key)) {
-          return this.get(key);
-        } else {
-          return this.set(key);
-        }
-      },
-      changed: function() {
-        return this._changes !== {};
-      },
-      changes: function() {
-        return this._changes;
-      },
-      unbindFrom: function(form) {
-        $(form).undelegate(":input", "change", this.onBoundChange);
-        return $(form).undelegate(":input", "keyup", this.onBoundChange);
-      },
-      bindTo: function(form) {
-        var self;
-        self = this;
-        $(form).delegate(":input", "change", {
-          record: this
-        }, this.onBoundChange);
-        return $(form).delegate(":input", "keyup", {
-          record: this
-        }, this.onBoundChange);
-      },
-      onBoundChange: function(e) {
-        var el, keys, record, value;
-        el = $(e.target);
-        record = e.data.record;
-        value = el.val();
-        keys = record._parseNameField(el);
-        keys.shift();
-        return record._parseAttributeKeys(keys, value);
-      },
-      _parseAttributeKeys: function(keys, value) {
-        var key;
-        if (keys.length === 1) {
-          key = keys[0];
-          return this.attr(key, value);
-        } else if (keys.length > 1) {
-          return this._parseAssociationKeys(keys, value);
-        }
-      },
-      _parseAssociationKeys: function(keys, value) {
-        var assoc, key, obj, uid;
-        assoc = keys.shift().replace("_attributes", "");
-        uid = keys.shift();
-        key = keys[0];
-        if (!this[assoc]._object) {
-          obj = this[assoc].findByUid(uid);
-        } else {
-          obj = this[assoc]._object;
-        }
-        return obj._parseAttributeKeys(keys, value);
-      },
-      _parseNameField: function(el) {
-        return _.map(el.attr("name").split("["), function(p) {
-          return p.replace("]", "");
-        });
-      },
-      id: function() {
-        return this.get("id");
-      },
-      uid: function() {
-        return this._uid;
-      },
-      isNew: function() {
-        return !_.isNumber(this.id());
-      },
-      errors: function() {
-        return this._errors;
-      },
-      resetErrors: function() {
-        return this._errors = {};
-      },
-      parent: function() {
-        return this._parent;
-      },
-      tagId: function() {
-        return this._tagId;
-      },
-      toJSON: function(options) {
-        var baseObj;
-        baseObj = options && options.child ? this._json = _.clone(this.attributes()) : this._json[model._name] = _.clone(this.attributes());
-        this.trigger("data:format", [this]);
-        _.each(model._manyAssociations, function(association) {
-          return model.prototype[association].each(function(child) {
-            var childKey;
-            childKey = "" + association + "_attributes";
-            if (!baseObj[childKey]) {
-              baseObj[childKey] = [];
-            }
-            return baseObj[childKey].push(child.toJSON({
-              child: true
-            }));
-          }, this);
-        }, this);
-        _.each(model._oneAssociations, function(association) {
-          var child;
-          child = model.prototype[association];
-          if (!child._fake) {
-            return this._json[model._name]["" + association + "_attributes"] = child.toJSON({
-              child: true
-            });
-          }
-        }, this);
-        return this._json;
-      },
-      getUrl: function(method) {
-        var path;
-        path = _.pluralize("/" + model._name);
-        if (!this.isNew()) {
-          path = "" + path + "/" + (this.id());
-        }
-        return path;
-      },
-      save: function(options) {
-        var error, method, record, success;
-        method = this.isNew() ? "create" : "update";
-        record = this;
-        options || (options = {});
-        success = options.success;
-        error = options.error;
-        options.success = function(resp, status, xhr) {
-          record.resetErrors();
-          if (!_.isEmpty(resp)) {
-            record.attr("id", resp["id"]);
-          }
-          success(record, resp, xhr);
-          return record.trigger("save:after", [record]);
-        };
-        options.error = function(resp, status, xhr) {
-          record._errors = $.parseJSON(resp.responseText);
-          if (error) {
-            error(record, resp, xhr);
-          }
-          return record.trigger("save:after", [record]);
-        };
-        record.trigger("save:before", [record]);
-        return Model.Sync(record, method, options);
-      },
-      toData: function() {}
-    });
-    _.extend(model, {
-      _manyAssociations: [],
-      _oneAssociations: [],
-      _sanitizers: {},
-      listAssociations: function() {
-        return this._manyAssociations.concat(this._oneAssociations);
-      },
-      hasMany: function(name, options) {
-        var collection, manyArray;
-        this._manyAssociations.push(name);
-        manyArray = {};
-        collection = new Model.Collection(name);
-        if (options && options.extend) {
-          _.extend(collection, options.extend);
-        }
-        manyArray[name] = collection;
-        return _.extend(model.prototype, manyArray);
-      },
-      hasOne: function(name) {
-        var association, oneObj;
-        this._oneAssociations.push(name);
-        association = new Model.One(name);
-        oneObj = {};
-        oneObj[name] = association;
-        oneObj["build_" + name] = function() {
-          return association.build();
-        };
-        oneObj["clear_" + name] = function() {
-          return association.clear();
-        };
-        return _.extend(model.prototype, oneObj);
-      },
-      sanitize: function(key, callback) {
-        return this._sanitizers[key] = callback;
-      },
-      newCollection: function() {
-        return new Model.Collection(this._name);
-      },
-      fetch: function(params) {
-        return model.newCollection().fetch(params);
-      },
-      query: function(options) {
-        return model.newCollection().query(options);
-      }
-    });
+    model.include(Model.Events);
+    model.include(Model.Base);
+    model.include(Model.Attributes);
+    model.include(Model.Persistence);
     return model;
-  };
-  this.Model.Events = {
-    bind: function(event, callback) {
-      this.callbacks = this.callbacks || {};
-      this.callbacks[event] = this.callbacks[event] || [];
-      this.callbacks[event].push(callback);
-      return this;
-    },
-    trigger: function(name, data) {
-      var callback, callbacks, _i, _len;
-      this.callbacks = this.callbacks || {};
-      callbacks = this.callbacks[name];
-      if (callbacks) {
-        for (_i = 0, _len = callbacks.length; _i < _len; _i++) {
-          callback = callbacks[_i];
-          callback.apply(this, data || []);
-        }
-      }
-      return this;
-    }
-  };
-  this.Model.Sync = function(obj, method, options) {
-    var data, methodVerbs, params;
-    methodVerbs = {
-      "create": "POST",
-      "update": "PUT",
-      "delete": "DELETE",
-      "read": "GET"
-    };
-    params = _.extend({
-      type: methodVerbs[method],
-      contentType: "application/json",
-      dataType: "json",
-      processData: method === "read" ? true : false
-    }, options);
-    params.url = obj.getUrl(method);
-    if (!options.data) {
-      data = JSON.stringify(obj.toJSON());
-      if (data !== "{}") {
-        params.data = data;
-      }
-    }
-    return $.ajax(params);
   };
   this.Model.One = function(name) {
     this._name = name;
@@ -364,6 +56,7 @@
     this.bind("remove", function(collection) {
       return this.trigger("refresh", [collection]);
     });
+    this._uid = _.uniqueId("" + this._name + "_");
     return this;
   };
   _.extend(Model.Collection.prototype, Model.Events, {
@@ -379,7 +72,7 @@
         return this._add(records);
       }
     },
-    removeAll: function() {
+    clear: function() {
       return this.records = [];
     },
     remove: function(records) {
@@ -422,20 +115,6 @@
         data: params
       });
       return this;
-    },
-    findByTagId: function(tag_id) {
-      return _.detect(this.records, function(element) {
-        return element.tagId() === parseInt(tag_id);
-      });
-    },
-    removeByTagId: function(tag_id) {
-      var record;
-      record = _.detect(this.records, function(element) {
-        return element.tagId() === parseInt(tag_id);
-      });
-      if (record) {
-        return this._remove(record);
-      }
     },
     findByUid: function(uid) {
       return _.detect(this.records, function(record) {

@@ -1,7 +1,3 @@
-/* DO NOT MODIFY. This file was compiled Tue, 19 Apr 2011 21:18:39 GMT from
- * /home/lance/Projects/healpay/app/coffeescripts/r.coffee
- */
-
 (function() {
   jQuery.R = function(route, callback) {
     var args, escapeRegExp, fn, namedParam, pathname, splatParam;
