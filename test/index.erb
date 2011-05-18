@@ -1,0 +1,24 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<title>Corpus Tests</title>
+<!-- Jasmine files -->
+<link rel="stylesheet" type="text/css" href="jasmine-1.0.2/jasmine.css">
+<script type="text/javascript" src="jasmine-1.0.2/jasmine.js"></script>
+<script type="text/javascript" src="jasmine-1.0.2/jasmine-html.js"></script>
+
+<% @vendor_files.each do |f| %>
+<script src="/assets/vendor/<%= f %>" type="text/javascript"></script>
+<% end %>
+<% @js_files.each do |f| %>
+<script src="/assets/js/<%= f %>" type="text/javascript"></script>
+<% end %>
+<% @spec_files.each do |f| %>
+<script src="/compiled/<%= f %>" type="text/javascript"></script>
+<% end %>
+</head>
+
+<body>
+<h1>Corpus Tests</h1>
+</body>
+</html>

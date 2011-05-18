@@ -19,6 +19,11 @@ task :doc do
   exec "docco src/*.coffee"
 end
 
+desc "Recompile corpus and tests"
+task :compile_tests do
+  exec "coffee -o js -c src/*.coffee;coffee -o test/compiled -c test/*.coffee"
+end
+
 # Check for the existence of an executable.
 def which(exec)
   return unless `which #{exec}`.empty?
